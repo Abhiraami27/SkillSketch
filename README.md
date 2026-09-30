@@ -1,189 +1,454 @@
-# SkillSketch — AI-Powered Lesson Plan Generator with RAG
+# 🎓 SkillSketch — AI-Powered Lesson Plan Generator with RAG
 
-An AI-driven syllabus-based lesson plan generation system for engineering faculty supporting outcome-based education.
+> **An AI-powered, syllabus-based lesson planning and assessment generation platform for engineering faculty, built around Retrieval-Augmented Generation (RAG) and locally hosted AI.**
 
-**✨ Key Features:**
-- 📄 **PDF Syllabus Upload** with automatic text extraction
-- 🧠 **RAG (Retrieval-Augmented Generation)** for context-aware generation
-- 📚 **AI Lesson Plan Generation** with learning objectives, methodologies, ALM
-- ❓ **Automatic Exam Question Extraction** (MCQ, short/long answer, difficulty levels)
-- 🎯 **4-Tab Web Interface** (Upload | Lesson Plans | Questions | History)
-- 🔒 **Data Privacy** - locally hosted LLM via Ollama, no cloud dependency
-- ⚡ **Fast & Efficient** - FAISS vector search, MongoDB persistence
+SkillSketch helps faculty transform course syllabi into structured **lesson plans** and **exam questions** using AI.
 
-**Tech Stack:**
-- Backend: **FastAPI** + **uvicorn** (modern async REST API)
-- Frontend: Streamlit (4-tab web UI)
-- Database: MongoDB
-- Vector DB: FAISS (semantic search)
-- LLM: Ollama (phi3-mini, locally hosted)
-- Embeddings: sentence-transformers
+The system accepts PDF syllabi, extracts and indexes their content, retrieves relevant syllabus context using **FAISS**, and generates educational content using a locally hosted **Ollama LLM**.
+
+The application is designed with a **FastAPI backend**, **Streamlit frontend**, **MongoDB persistence**, **FAISS semantic search**, and **Sentence-Transformers embeddings**.
 
 ---
 
-## Quick Start (Local Setup)
+## 🚀 Key Features
 
-### 1. Clone/Navigate to Project
-```bash
-cd D:\skillsketch-main\skillsketch-main
+### 📄 Syllabus Upload
+
+* Upload PDF-based course syllabi
+* Automatic PDF text extraction
+* Text chunking and preprocessing
+* Syllabus metadata persistence
+
+### 🧠 Retrieval-Augmented Generation
+
+SkillSketch uses RAG to ground AI-generated content in the uploaded syllabus.
+
+**Pipeline:**
+
+```text
+PDF Syllabus
+     ↓
+Text Extraction
+     ↓
+Text Chunking
+     ↓
+Sentence Embeddings
+     ↓
+FAISS Vector Index
+     ↓
+Relevant Context Retrieval
+     ↓
+Ollama LLM
+     ↓
+Generated Educational Content
 ```
 
-### 2. Configure Environment
+### 📚 AI Lesson Plan Generation
+
+Generate structured lesson plans based on syllabus content.
+
+Generated plans can include:
+
+* Learning objectives
+* Teaching methodologies
+* Activity-Based Learning (ALM)
+* Laboratory ideas
+* Topic-specific teaching content
+
+### ❓ Automatic Exam Question Generation
+
+Generate questions from uploaded syllabus content.
+
+Supported question types include:
+
+* Multiple Choice Questions
+* Short-answer questions
+* Long-answer questions
+* Different difficulty levels
+
+Question count can be configured from **5–50 questions**.
+
+### 🖥️ Four-Tab Web Interface
+
+The Streamlit application provides four major sections:
+
+```text
+┌─────────────────────────────────────────────┐
+│              SKILLSKETCH UI                 │
+├───────────┬───────────┬──────────┬─────────┤
+│  Upload   │  Lesson   │ Questions│ History │
+│           │   Plans   │          │         │
+└───────────┴───────────┴──────────┴─────────┘
+```
+
+### 🔒 Local AI & Privacy
+
+The project uses **Ollama** for local LLM inference, reducing dependency on external cloud AI services.
+
+This allows syllabus content and generated educational material to remain within the local development environment.
+
+### ⚡ Semantic Search
+
+FAISS is used for efficient vector similarity search, while Sentence-Transformers generates embeddings for syllabus content.
+
+---
+
+# 🏗️ System Architecture
+
+```text
+                    ┌───────────────────────┐
+                    │       FACULTY         │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │   STREAMLIT WEB UI    │
+                    │                       │
+                    │ Upload | Plans |       │
+                    │ Questions | History   │
+                    └───────────┬───────────┘
+                                │
+                         HTTP Requests
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │    FASTAPI BACKEND    │
+                    │       Uvicorn         │
+                    └───────────┬───────────┘
+                                │
+              ┌─────────────────┼─────────────────┐
+              │                 │                 │
+              ▼                 ▼                 ▼
+       ┌────────────┐    ┌────────────┐    ┌────────────┐
+       │  MongoDB   │    │   FAISS    │    │   Ollama   │
+       │  Storage   │    │ Vector DB  │    │ Local LLM  │
+       └────────────┘    └─────┬──────┘    └────────────┘
+                               │
+                               ▼
+                    Sentence-Transformers
+                         Embeddings
+```
+
+---
+
+# 🛠️ Tech Stack
+
+| Component        | Technology            | Purpose                     |
+| ---------------- | --------------------- | --------------------------- |
+| Language         | Python                | Application development     |
+| Backend          | FastAPI               | REST API                    |
+| Server           | Uvicorn               | ASGI application server     |
+| Frontend         | Streamlit             | Interactive web interface   |
+| Database         | MongoDB               | Persistent application data |
+| Vector Search    | FAISS                 | Semantic similarity search  |
+| Embeddings       | Sentence-Transformers | Text vectorization          |
+| LLM              | Ollama + Phi-3 Mini   | Local AI generation         |
+| PDF Processing   | PyPDF2                | Syllabus text extraction    |
+| Configuration    | `.env`                | Environment configuration   |
+| Containerization | Docker Compose        | Service orchestration       |
+
+The documented stack specifies FastAPI/Uvicorn, Streamlit, MongoDB, FAISS, Ollama with `phi3:mini`, and Sentence-Transformers.
+
+---
+
+# 🔄 Application Workflow
+
+## 1️⃣ Upload Syllabus
+
+```text
+Faculty
+   ↓
+Upload PDF
+   ↓
+Extract Text
+   ↓
+Chunk Content
+   ↓
+Generate Embeddings
+   ↓
+Create FAISS Index
+   ↓
+Store Metadata in MongoDB
+```
+
+The uploaded syllabus becomes the knowledge source for subsequent AI generation.
+
+---
+
+## 2️⃣ Generate Lesson Plan
+
+```text
+Select Syllabus
+       ↓
+Enter Topic
+       ↓
+Retrieve Relevant Chunks
+       ↓
+Build RAG Context
+       ↓
+Ollama LLM
+       ↓
+Structured Lesson Plan
+```
+
+Example topic:
+
+```text
+Fourier Transform
+```
+
+The system retrieves relevant syllabus information before asking the local LLM to generate the lesson plan.
+
+---
+
+## 3️⃣ Generate Exam Questions
+
+```text
+Select Syllabus
+       ↓
+Select Topic
+       ↓
+Specify Question Count
+       ↓
+Retrieve Syllabus Context
+       ↓
+AI Question Generation
+       ↓
+MCQ / Short / Long Questions
+       ↓
+Difficulty Classification
+```
+
+---
+
+## 4️⃣ View History
+
+Faculty can access previously stored:
+
+* Uploaded syllabi
+* Generated lesson plans
+* Generated questions
+
+This allows previously generated educational content to be reused.
+
+---
+
+# 📁 Project Structure
+
+```text
+skillsketch/
+│
+├── fastapi_backend/
+│   ├── main.py
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── app.py
+│   └── requirements.txt
+│
+├── tests/
+│   ├── api_test.py
+│   └── upload_test.py
+│
+├── scripts/
+│   ├── find_ollama.ps1
+│   ├── check_user_ollama.ps1
+│   └── probe_ollama_paths.ps1
+│
+├── data/
+│   ├── uploads/
+│   ├── syllabi.json
+│   ├── lesson_plans.json
+│   └── questions.json
+│
+├── .env.example
+├── .gitignore
+├── README.md
+├── SETUP_GUIDE.md
+├── GETTING_STARTED.md
+├── FASTAPI_STARTUP.md
+├── IMPLEMENTATION_SUMMARY.md
+├── QUICK_REFERENCE.md
+├── startup.py
+└── verify.py
+```
+
+The structure includes separate backend and frontend components, test scripts, Ollama utility scripts, local data storage, and setup documentation.
+
+---
+
+# 🔌 API Endpoints
+
+## Health & Status
+
+```http
+GET /api/health/
+GET /api/ollama/status/
+```
+
+## Syllabus Management
+
+```http
+POST   /api/upload-syllabus/
+GET    /api/syllabi/
+GET    /api/syllabi/{id}/
+DELETE /api/syllabi/{id}/
+```
+
+## Lesson Plan Generation
+
+```http
+POST /api/generate-lesson-plan/
+GET  /api/lesson-plans/
+GET  /api/lesson-plans/{id}/
+```
+
+## Exam Question Generation
+
+```http
+POST /api/generate-exam-questions/
+```
+
+These endpoints are documented in the project's API specification.
+
+---
+
+# 💻 Quick Start
+
+## Prerequisites
+
+Make sure the following are installed:
+
+* Python
+* MongoDB
+* Ollama
+* Git
+
+---
+
+## 1. Clone the Repository
+
+```powershell
+git clone https://github.com/Abhiraami27/SkillSketch.git
+cd SkillSketch
+```
+
+> Replace the repository URL if your GitHub repository uses a different name.
+
+---
+
+## 2. Create Virtual Environment
+
+```powershell
+python -m venv .venv
+```
+
+Activate it:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+---
+
+## 3. Configure Environment
+
 ```powershell
 copy .env.example .env
-# Edit .env and set secure passwords
 ```
 
-### 3. Install MongoDB (Local)
-```powershell
-# Download from https://www.mongodb.com/try/download/community
-# Or use Windows Package Manager: choco install mongodb-community
+Open `.env` and configure the required values.
+
+---
+
+## 4. Install MongoDB
+
+Install and start MongoDB locally.
+
+The project documentation uses:
+
+```text
+localhost:27017
 ```
 
-### 4. Install & Start Ollama (Local)
+for the local MongoDB instance.
+
+---
+
+## 5. Install Ollama
+
+Install Ollama and download the required model:
+
 ```powershell
-# Download from https://ollama.ai
-# Start Ollama service and pull model:
 ollama pull phi3:mini
 ```
 
-### 5. Start Backend (FastAPI)
+Verify:
+
+```powershell
+ollama ls
+```
+
+---
+
+# ▶️ Start the Backend
+
+Open a terminal:
+
 ```powershell
 cd fastapi_backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-### 6. Start Frontend (Streamlit) - In New Terminal
+Backend:
+
+```text
+http://localhost:8000
+```
+
+Swagger API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+# 🖥️ Start the Frontend
+
+Open another terminal:
+
 ```powershell
 cd frontend
 python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-### 7. Access Application
-- **Streamlit UI:** http://localhost:8501
-- **FastAPI Docs:** http://localhost:8000/docs
-- **API Health:** http://localhost:8000/api/health/
-- **MongoDB:** localhost:27017 (if running locally)
+Open:
+
+```text
+http://localhost:8501
+```
+
+The documented local setup uses port **8000** for FastAPI and **8501** for Streamlit.
 
 ---
 
-## Workflow: Upload → Generate Plans → Extract Questions
+# 🧪 API Examples
 
-### Step 1: Upload Syllabus (Tab 1)
-- Upload PDF course syllabus
-- Automatic text extraction + chunking
-- Vector embeddings created (FAISS)
-- Stored in MongoDB
+## Upload Syllabus
 
-### Step 2: Generate Lesson Plan (Tab 2)
-- Select uploaded syllabus
-- Enter topic (e.g., "Fourier Transform")
-- RAG retrieves relevant chunks
-- Ollama AI generates structured lesson plan
-- Includes: objectives, methodologies, ALM, lab ideas
-
-### Step 3: Generate Exam Questions (Tab 3)
-- Select same syllabus
-- Specify question count (5-50)
-- AI analyzes syllabus patterns
-- Generates: MCQ, short answer, long answer questions
-- Includes difficulty levels
-
-### Step 4: View History (Tab 4)
-- All uploaded syllabi
-- All generated lesson plans
-- Reuse previous results
-
----
-
-## Project Structure
-
-```
-skillsketch/
-├── fastapi_backend/
-│   ├── main.py                       # FastAPI app with all endpoints
-│   ├── requirements.txt              # FastAPI dependencies
-│   └── (no Dockerfile - local only)
-│
-├── frontend/
-│   ├── app.py                        # Streamlit 4-tab UI
-│   ├── requirements.txt              # Streamlit dependencies
-│   └── (no Dockerfile - local only)
-│
-├── fastapi_backend/                  # FastAPI REST API (uvicorn)
-│   ├── README.md
-│
-├── tests/
-│   ├── api_test.py                   # Integration test script
-│   └── upload_test.py                # Upload endpoint test
-│
-├── scripts/
-│   ├── find_ollama.ps1               # Find Ollama installation
-│   ├── check_user_ollama.ps1         # Check user Ollama path
-│   └── probe_ollama_paths.ps1        # Probe common Ollama locations
-│
-├── data/                             # Local data storage
-│   ├── uploads/                      # PDF uploads
-│   ├── syllabi.json                  # Syllabus metadata
-│   ├── lesson_plans.json             # Generated lesson plans
-│   └── questions.json                # Generated exam questions
-│
-├── .env.example                      # Configuration template
-├── .gitignore
-├── README.md                         # This file
-├── SETUP_GUIDE.md                    # Detailed setup & troubleshooting
-├── GETTING_STARTED.md                # Quick start guide
-├── FASTAPI_STARTUP.md                # FastAPI-specific guide
-├── IMPLEMENTATION_SUMMARY.md         # Feature summary & architecture
-├── QUICK_REFERENCE.md                # Quick reference guide
-├── startup.py                        # Startup verification script
-└── verify.py                         # Service verification script
-```
-
----
-
-## API Endpoints
-
-### Health & Status
-```
-GET  /api/health/                    # Backend status
-GET  /api/ollama/status/             # Ollama availability
-```
-
-### Syllabus Management
-```
-POST /api/upload-syllabus/           # Upload PDF (multipart form-data)
-GET  /api/syllabi/                   # List all syllabi
-GET  /api/syllabi/{id}/              # Get syllabus details
-DELETE /api/syllabi/{id}/            # Delete syllabus
-```
-
-### Lesson Plan Generation
-```
-POST /api/generate-lesson-plan/      # Generate RAG-based lesson plan
-GET  /api/lesson-plans/              # List generated plans
-GET  /api/lesson-plans/{id}/         # Get specific plan
-```
-
-### Exam Question Generation
-```
-POST /api/generate-exam-questions/   # Generate questions from syllabus
-```
-
----
-
-## Example Usage
-
-### Upload Syllabus
 ```bash
 curl -X POST http://localhost:8000/api/upload-syllabus/ \
   -F "file=@syllabus.pdf" \
   -F "course_name=Digital Signal Processing"
 ```
 
-### Generate Lesson Plan (with RAG context)
+---
+
+## Generate Lesson Plan
+
 ```bash
 curl -X POST http://localhost:8000/api/generate-lesson-plan/ \
   -H "Content-Type: application/json" \
@@ -194,7 +459,10 @@ curl -X POST http://localhost:8000/api/generate-lesson-plan/ \
   }'
 ```
 
-### Generate Exam Questions
+---
+
+## Generate Exam Questions
+
 ```bash
 curl -X POST http://localhost:8000/api/generate-exam-questions/ \
   -H "Content-Type: application/json" \
@@ -207,221 +475,217 @@ curl -X POST http://localhost:8000/api/generate-exam-questions/ \
 
 ---
 
-## Testing
+# 🧪 Testing
 
-### Run Integration Tests
-```bash
-# Python test script
+Integration tests can be executed using:
+
+```powershell
 python tests/api_test.py
-
-# Or bash script (requires curl & jq)
-bash tests/test_api.sh
 ```
 
-### Manual Testing
+Additional upload testing:
+
 ```powershell
-# Health check
+python tests/upload_test.py
+```
+
+Health check:
+
+```powershell
 curl http://localhost:8000/api/health/
+```
 
-# MongoDB connection
-python tests/mongo_test.py
+Ollama status:
 
-# Ollama status
+```powershell
 curl http://localhost:8000/api/ollama/status/
 ```
 
----
-
-## Performance Expectations
-
-| Operation | Time | Notes |
-|-----------|------|-------|
-| PDF Upload (10 pages) | 5-10s | Text extraction + chunking |
-| Embedding Creation | 2-3s | Per 50 chunks |
-| Lesson Plan Generation | 20-60s | First: model loading; subsequent: 5-15s |
-| Question Generation | 25-70s | Depends on model & question count |
+The repository includes dedicated API and upload test scripts.
 
 ---
 
-## Troubleshooting
+# 📊 Expected Performance
 
-### Backend Not Running
-```powershell
-docker compose logs fastapi
-docker compose up -d --build
+| Operation               |       Expected Time |
+| ----------------------- | ------------------: |
+| PDF Upload — 10 pages   |            5–10 sec |
+| Embedding Creation      | 2–3 sec / 50 chunks |
+| Lesson Plan Generation  |           20–60 sec |
+| Subsequent Lesson Plans |            5–15 sec |
+| Question Generation     |           25–70 sec |
+
+Actual performance depends on the machine, model loading time, syllabus size, and question count.
+
+---
+
+# 🔐 Security & Privacy
+
+Before deploying the application beyond a local development environment:
+
+* Change default credentials
+* Keep secrets inside `.env`
+* Set `DEBUG=False`
+* Generate a secure `SECRET_KEY`
+* Enable HTTPS
+* Restrict CORS origins
+* Configure regular MongoDB backups
+* Monitor application logs
+
+The project documentation specifically recommends these production hardening steps.
+
+---
+
+# 🧠 Why RAG?
+
+Traditional generative AI can produce answers based on general model knowledge.
+
+SkillSketch instead follows a **retrieval-first approach**:
+
+```text
+                  Traditional AI
+
+             User Topic
+                  ↓
+               LLM
+                  ↓
+             AI Response
 ```
 
-### Ollama Not Available
-```powershell
-ollama ls
-ollama pull phi3:mini
+SkillSketch:
+
+```text
+             User Topic
+                  ↓
+          Search Syllabus
+                  ↓
+           FAISS Retrieval
+                  ↓
+        Relevant Context
+                  ↓
+             Ollama LLM
+                  ↓
+        Syllabus-Grounded
+             Response
 ```
 
-### MongoDB Connection Error
-```powershell
-# Check MongoDB service is running
-Get-Service MongoDB
-
-# If not running, start it:
-Start-Service MongoDB
-```
-
-### PDF Text Not Extracted
-- Ensure PDF is text-based (not scanned image)
-- Try with different PDF file
-- Check file is valid PDF
+This architecture makes the generated lesson plans and questions specifically informed by the uploaded course syllabus.
 
 ---
 
-## Development Setup (Local - No Docker)
+# 🎯 Educational Use Case
 
-### Backend (FastAPI)
-```bash
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1  # Windows
+SkillSketch is designed to support engineering faculty in:
 
-pip install -r fastapi_backend/requirements.txt
-cd fastapi_backend
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```text
+Course Syllabus
+      │
+      ├──► Lesson Planning
+      │
+      ├──► Learning Objectives
+      │
+      ├──► Teaching Methodologies
+      │
+      ├──► Activity-Based Learning
+      │
+      ├──► Lab Ideas
+      │
+      └──► Exam Question Generation
 ```
 
-### Frontend (Streamlit)
-```bash
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-pip install -r frontend/requirements.txt
-streamlit run frontend/app.py
-```
-
-### MongoDB (Local)
-```bash
-# Windows: Download from https://www.mongodb.com/try/download/community
-# Then start the MongoDB service
-# Or use Docker for just MongoDB:
-docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=pass123 mongo:6.0
-```
-
-### Ollama (Local)
-```bash
-# Download from https://ollama.ai and install
-# Start Ollama and pull phi3 model:
-ollama pull phi3:mini
-```
+The system therefore combines **education technology + RAG + local LLM inference** into one workflow.
 
 ---
 
-## Security (Production)
+# 🔮 Future Enhancements
 
-⚠️ **Before going to production:**
+The documented roadmap includes:
 
-1. Change all default credentials in `.env`
-2. Set `DEBUG=False`
-3. Generate new `SECRET_KEY`:
-   ```bash
-python -c "import secrets; print(secrets.token_urlsafe(50))"
-   ```
-4. Enable HTTPS (use reverse proxy)
-5. Restrict CORS origins
-6. Regular MongoDB backups
-7. Monitor logs for security events
+* [ ] Course Outcome → Program Outcome mapping
+* [ ] UN Sustainable Development Goals alignment
+* [ ] Multi-LLM support
+* [ ] User authentication and role management
+* [ ] Batch processing
+* [ ] GIFT export
+* [ ] IMS-QTI export
+* [ ] Performance analytics dashboard
 
 ---
 
-## System Architecture
+# 📚 Documentation
 
-```
-┌─────────────────────────────────────┐
-│    STREAMLIT WEB UI (Tab 1-4)       │
-│ Upload | Plans | Questions | History│
-└──────────────┬──────────────────────┘
-               │ HTTP (port 8501)
-┌──────────────▼──────────────────────┐
-│    FASTAPI REST API (UVICORN)       │
-│  ├─ POST /upload-syllabus/          │
-│  ├─ POST /generate-lesson-plan/     │
-│  ├─ POST /generate-exam-questions/  │
-│  └─ GET /syllabi/, /lesson-plans/   │
-└──────────┬────────────────┬─────────┘
-           │                │
-    ┌──────▼──────┐  ┌──────▼──────┐
-    │  MONGODB    │  │  OLLAMA LLM │
-    │  (storage)  │  │ (generation)│
-    └─────────────┘  └─────────────┘
-           │
-    ┌──────▼──────────┐
-    │  FAISS Vector   │
-    │  Index (search) │
-    └─────────────────┘
+Additional project documentation:
+
+| Document                    | Description                        |
+| --------------------------- | ---------------------------------- |
+| `SETUP_GUIDE.md`            | Complete setup and troubleshooting |
+| `GETTING_STARTED.md`        | Quick-start instructions           |
+| `FASTAPI_STARTUP.md`        | FastAPI-specific instructions      |
+| `IMPLEMENTATION_SUMMARY.md` | Feature and architecture summary   |
+| `QUICK_REFERENCE.md`        | Quick reference guide              |
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+```text
+1. Fork the repository
+2. Create a feature branch
+3. Implement your changes
+4. Run the available tests
+5. Commit your changes
+6. Push the branch
+7. Create a Pull Request
 ```
 
 ---
 
-## Key Technologies
+# 📜 License
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Backend | FastAPI 0.95.1 + uvicorn | REST API |
-| Frontend | Streamlit | Web UI |
-| Database | MongoDB | Document storage |
-| Vector DB | FAISS | Semantic search |
-| Embeddings | sentence-transformers | Text vectorization |
-| LLM | Ollama + phi3-mini | Local AI |
-| PDF Processing | PyPDF2 | Text extraction |
-| Containerization | Docker Compose | Orchestration |
+A specific open-source license should be selected and added to the repository before publishing this project for external reuse.
 
 ---
 
-## Limitations & Future Work
+# 👩‍💻 Author
 
-- [ ] Course Outcome (CO) → Program Outcome (PO) mapping
-- [ ] UN Sustainable Development Goals (SDG) alignment
-- [ ] Multi-LLM support (GPT, Llama, Claude)
-- [ ] User authentication & roles
-- [ ] Batch processing
-- [ ] Export formats (GIFT, IMS-QTI)
-- [ ] Performance analytics dashboard
+**Abhiraami SP**
 
----
+Integrated M.Tech — Computer Science and Engineering
+Sri Ramakrishna Engineering College
 
-## Support & Contributing
+### Areas of Interest
 
-**For issues:**
-1. Check [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed troubleshooting
-2. View logs: `docker compose logs -f`
-3. Run tests: `python tests/api_test.py`
-
-**To contribute:**
-1. Create a feature branch
-2. Make changes
-3. Test with `api_test.py`
-4. Submit PR
+* Artificial Intelligence
+* Machine Learning
+* Generative AI
+* Retrieval-Augmented Generation
+* Web Development
+* Educational Technology
 
 ---
 
-## Documentation
+# ⭐ Project Highlights
 
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** — Complete setup, usage, and troubleshooting
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** — Feature overview and architecture
-- **API Documentation** — See "API Endpoints" section above
-
----
-
-## License
-
-[Specify your license, e.g., MIT, Apache 2.0]
-
----
-
-## Contact & Support
-
-For questions, issues, or contributions:
-- Create an issue with error details and logs
-- Include sample PDF if PDF-related
-- Provide environment info (Windows/Linux, Docker version, etc.)
+```text
+🎓 AI-Powered Education
+🧠 Retrieval-Augmented Generation
+📄 PDF Syllabus Intelligence
+📚 Automated Lesson Planning
+❓ AI Exam Question Generation
+🔎 FAISS Semantic Retrieval
+🤖 Local Ollama LLM
+⚡ FastAPI Backend
+🖥️ Streamlit Interface
+🍃 MongoDB Persistence
+🔒 Local & Privacy-Focused AI
+```
 
 ---
 
-**Happy lesson planning! 🎓✨**
+## 🎓 SkillSketch
 
-*SkillSketch v1.0 — Local AI-Powered Education Technology*
+**Turning course syllabi into intelligent, structured teaching resources with RAG and local AI.**
+
+> **SkillSketch v1.0 — Local AI-Powered Education Technology**
